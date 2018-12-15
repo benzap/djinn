@@ -1,14 +1,22 @@
-# clojinn
+# clojinn - Clojure-in-clojure Scripting.
 
-A Clojure library designed to ... well, that part is up to you.
+The answer to using clojure within a natively compiled clojure
+application.
 
-## Usage
+## Example
 
-FIXME
+```clojure
 
-## License
+(require '[clojinn.core :as clji])
 
-Copyright © 2018 FIXME
 
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+(clji/eval
+  (def x 10)
+  
+  (defn hello [x] (println "Hello " x "!"))
+  
+  (hello "clojinn")) ;; => nil
+  ;; <stdout>: Hello clojinn!\n
+  
+```
+
