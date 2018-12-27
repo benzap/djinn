@@ -1,6 +1,6 @@
-(ns clojinn.core-test
+(ns djinn.core-test
   (:require [clojure.test :refer :all]
-            [clojinn.core :refer :all]))
+            [djinn.core :refer :all]))
 
 (deftest a-test
   (testing "FIXME, I fail."
