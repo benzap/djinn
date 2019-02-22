@@ -1,4 +1,4 @@
-# clojinn - Clojure-in-clojure Scripting.
+# djinn - Clojure-in-clojure Scripting.
 
 The answer to using clojure within a natively compiled clojure
 application.
@@ -7,16 +7,16 @@ application.
 
 ```clojure
 
-(require '[clojinn.core :as clji])
+(require '[djinn.core :as djinn])
 
 
-(clji/eval
+(djinn/eval
   (def x 10)
   
-  (defn hello [x] (println "Hello " x "!"))
+  (defn hello [x] (println "Hello " x "!") :done)
   
-  (hello "clojinn")) ;; => nil
-  ;; <stdout>: Hello clojinn!\n
+  (hello "djinn")) ;; => :done
+  ;; <stdout>: Hello djinn!\n
   
 ```
 
