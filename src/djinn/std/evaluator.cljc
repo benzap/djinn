@@ -12,6 +12,7 @@
 
 (defn evaluate
   [{:keys [statements] :as ast}]
-  (for [form statements]
-    (evaluate-form form)))
+  (last
+   (for [form statements]
+     (evaluate-form form))))
 

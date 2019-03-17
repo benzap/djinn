@@ -6,4 +6,4 @@
 (defrecord MapSetExpression [*sm elements]
   Evaluate
   (evaluate [_]
-    (println elements)))
+    (into #{} (map evaluate elements))))

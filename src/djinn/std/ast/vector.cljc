@@ -6,4 +6,4 @@
 (defrecord VectorExpression [*sm elements]
   Evaluate
   (evaluate [_]
-    (println elements)))
+    (mapv evaluate elements)))

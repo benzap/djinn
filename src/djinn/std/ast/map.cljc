@@ -3,7 +3,8 @@
    [djinn.std.evaluate.protocol :refer [Evaluate evaluate]]))
 
 
-(defrecord MapExpression [*sm m]
+(defrecord MapExpression [*sm map-entries]
   Evaluate
   (evaluate [_]
-    (println m)))
+    (println map-entries)
+    (into {} (map (fn [[k v]] [(evaluate k) (evaluate v)]) map-entries))))

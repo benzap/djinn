@@ -25,7 +25,8 @@
     (djinn.std.ast.map/->MapExpression
      *sm
      (map (fn [[k v]] [(djinn.std.parse.protocol/parse k *sm)
-                       (djinn.std.parse.protocol/parse v *sm)]))))
+                       (djinn.std.parse.protocol/parse v *sm)])
+          this)))
     
   clojure.lang.PersistentVector
   (parse [this *sm]
