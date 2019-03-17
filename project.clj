@@ -3,6 +3,7 @@
   :url "http://github.com/benzap/djinn"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
+  :plugins [[cider/cider-nrepl "0.21.1"]]
   :dependencies [[org.clojure/clojure "1.10.0"]
                  [org.clojure/tools.reader "1.3.2"]])
 
