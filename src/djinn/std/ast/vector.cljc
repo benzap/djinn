@@ -1,9 +1,9 @@
-(ns djinn.std.s-expression
+(ns djinn.std.ast.vector
   (:require
    [djinn.std.evaluate.protocol :refer [Evaluate evaluate]]))
 
 
-(defrecord SExpression [*sm elements]
+(defrecord VectorExpression [*sm elements]
   Evaluate
   (evaluate [_]
     (println elements)))
