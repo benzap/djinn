@@ -26,7 +26,10 @@
   
 
 (defn get-var [scope name]
-  (get (reduce merge (:listing scope)) name))
+  (get (reduce merge (:listing scope)) name ::miss))
+
+
+(defn undefined? [val] (= val ::miss))
 
 
 #_(-> (new-scope)

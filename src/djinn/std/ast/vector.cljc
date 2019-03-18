@@ -3,7 +3,13 @@
    [djinn.std.evaluate.protocol :refer [Evaluate evaluate]]))
 
 
-(defrecord VectorExpression [*sm elements]
+(defrecord VectorExpression [elements]
   Evaluate
-  (evaluate [_]
-    (mapv evaluate elements)))
+  (evaluate [_ sm]
+    (let [*sm (atom sm)
+          elements 
+          (mapv (fn [elem]
+                  (let [[sm value] (evaluate elem @*sm)]
+                    (reset! *sm sm)
+                    value)) elements)]
+      [@*sm elements])))

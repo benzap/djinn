@@ -2,4 +2,4 @@
 
 
 (defprotocol Parse
-  (parse [this *sm]))
+  (parse [this]))

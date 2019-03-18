@@ -2,18 +2,18 @@
   (:refer-clojure :exclude [eval])
   (:require
    [djinn.std.state-machine :as std.state-machine]
-   [djinn.std.ast :as std.ast]
-   [djinn.std.evaluator :as std.evaluator]))
+   [djinn.std.evaluator :as std.evaluator]
+   [djinn.stdlib :refer [import-stdlib]]))
 
 
 (def ^:dynamic *default-state-machine*
-  (std.state-machine/new-state-machine))
+  (-> (std.state-machine/new-state-machine)
+      (import-stdlib)))
 
 
 (defn eval-fn
   [form-listing]
-  (let [ast (std.ast/parse *default-state-machine* form-listing)]
-    (std.evaluator/evaluate ast)))
+  (second (std.evaluator/evaluate *default-state-machine* form-listing)))
 
 
 ;; (eval-fn '[2 [1 2 3] {:a 123}])
@@ -24,4 +24,5 @@
   `(eval-fn (quote ~forms)))
 
 
-;; (eval (+ 2 2))
+;; (eval 1 2 3)
+;; (eval (def x 10) (def y 11) x {:a x})

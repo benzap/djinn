@@ -15,68 +15,63 @@
   ;;
 
   clojure.lang.PersistentList
-  (parse [this *sm]
+  (parse [this]
     (djinn.std.ast.s-expression/->SExpression
-     *sm
-     (map #(djinn.std.parse.protocol/parse % *sm) this)))
+     (map djinn.std.parse.protocol/parse this)))
 
   clojure.lang.PersistentArrayMap
-  (parse [this *sm]
+  (parse [this]
     (djinn.std.ast.map/->MapExpression
-     *sm
-     (map (fn [[k v]] [(djinn.std.parse.protocol/parse k *sm)
-                       (djinn.std.parse.protocol/parse v *sm)])
+     (map (fn [[k v]] [(djinn.std.parse.protocol/parse k)
+                       (djinn.std.parse.protocol/parse v)])
           this)))
     
   clojure.lang.PersistentVector
-  (parse [this *sm]
+  (parse [this]
     (djinn.std.ast.vector/->VectorExpression
-     *sm
-     (map #(djinn.std.parse.protocol/parse % *sm) this)))
+     (map djinn.std.parse.protocol/parse this)))
     
   clojure.lang.PersistentHashSet
-  (parse [this *sm]
+  (parse [this]
     (djinn.std.ast.set/->MapSetExpression
-     *sm
-     (map #(djinn.std.parse.protocol/parse % *sm) this)))
+     (map djinn.std.parse.protocol/parse this)))
 
   ;;
   ;; Base Clojure Data Types
   ;;
 
   clojure.lang.Keyword
-  (parse [this *sm] this)
+  (parse [this] this)
 
   clojure.lang.Ratio
-  (parse [this *sm] this)
+  (parse [this] this)
 
   clojure.lang.Symbol
-  (parse [this *sm]
-    (djinn.std.ast.symbol/->SymbolExpression *sm this))
+  (parse [this] this)
 
   ;;
   ;; Base Java Data Types
   ;;
 
   java.lang.String
-  (parse [this *sm] this)
+  (parse [this] this)
 
   java.lang.Long
-  (parse [this *sm] this)
+  (parse [this] this)
 
   java.lang.Double
-  (parse [this *sm] this)
+  (parse [this] this)
 
   java.lang.Boolean
-  (parse [this *sm] this)
+  (parse [this] this)
 
   java.util.regex.Pattern
-  (parse [this *sm] this)
+  (parse [this] this)
 
   ;;
   ;; Default
   ;; 
   java.lang.Object
-  (parse [this *sm]
+  (parse [this]
     (println (str "Warning: Unknown Parsed Object [" (type this) "]"))
     this))

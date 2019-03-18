@@ -6,12 +6,10 @@
 
 
 (defn parse
-  [sm forms]
-  (let [*sm (atom sm)]
-    {:statements
-     (for [form forms]
-       (parse.protocol/parse form *sm))
-     :*sm *sm}))
+  [forms]
+  (for [form forms]
+    (parse.protocol/parse form)))
+
 
 
 ;; (parse {} ['(1 2 3) 1 2 [1 2]])

@@ -2,4 +2,4 @@
 
 
 (defprotocol Evaluate
-  (evaluate [this]))
+  (evaluate [this sm]))
