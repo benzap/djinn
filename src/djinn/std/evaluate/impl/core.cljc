@@ -46,7 +46,7 @@
 
 
 (defn evaluate-set [this sm]
-  (let [*sm (atom sm)
+  (let [*sm (atom sm) ;; TODO: switch to loop
         this
         (map (fn [elem]
                (let [[sm value] (evaluate elem @*sm)]
@@ -64,26 +64,9 @@
 
 (extend-protocol djinn.std.evaluate.protocol/Evaluate
 
-  ;;
-  ;; Base Clojure Data Collections
-  ;;
-
-  ;;#?(:clj clojure.lang.PersistentList :cljs cljs.core.PersistentList)
-  ;;(evaluate [this sm] (evaluate-list this sm))
-
-  ;;#?(:clj clojure.lang.PersistentArrayMap :cljs cljs.core.PersistentArrayMap)
-  ;;(evaluate [this sm] (evaluate-map this sm))
-
-  ;;#?(:clj clojure.lang.PersistentVector :cljs cljs.core.PersistentVector)
-  ;;(evaluate [this sm] (evaluate-vector this sm))
-
-  ;;#?(:clj clojure.lang.PersistentHashSet :cljs cljs.core.PersistentHashSet)
-  ;;(evaluate [this sm] (evaluate-set this sm))
-
-  ;;#?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
-  ;;(evaluate [this sm] (evaluate-symbol this sm))
-
-  ;; Use Default for everything else
+  ;; Use Default for everything
+  ;; Notes: protocols appear to be broken in cljs
+  ;; FIXME: extend base clojure types in cljs such that it works
   #?(:clj java.lang.Object :cljs default)
   (evaluate [this sm]
     (cond
