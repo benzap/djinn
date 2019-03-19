@@ -20,6 +20,15 @@
       [sm result])))
 
 
+(defn evaluate-arguments
+  [sm arguments]
+  (loop [sm sm arguments arguments return-arguments []]
+    (if-not (empty? arguments)
+      (let [[sm result] (evaluate-form sm (first arguments))]
+        (recur sm (rest arguments) (conj return-arguments result)))
+      [sm return-arguments])))
+
+
 (defn evaluate
   [sm form-listing]
   (let [ast (std.ast/parse form-listing)]
