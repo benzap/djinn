@@ -1,4 +1,5 @@
-(ns djinn.std.scope)
+(ns djinn.std.scope
+  #?(:cljs (:refer-clojure :exclude [undefined?])))
 
 
 (defrecord Scope [listing])

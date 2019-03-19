@@ -1,7 +1,8 @@
 (ns djinn.core-test
-  (:require [clojure.test :refer :all]
-            [djinn.core :refer :all]))
+  (:require [clojure.test :refer [deftest is are testing]]
+            [djinn.core :as djinn]))
 
-(deftest a-test
+
+(deftest main-test
   (testing "FIXME, I fail."
     (is (= 0 1))))

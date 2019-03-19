@@ -1,16 +1,17 @@
-(ns djinn.std.function
+(ns djinn.std.fn
+  (:refer-clojure :exclude [IFn])
   (:require
    [djinn.std.evaluator :refer [evaluate]]
    [djinn.std.state-machine :as state]
    [djinn.std.scope :as scope]))
 
 
-(defprotocol Invokable
+(defprotocol IFn
   (invoke [this sm arguments]))
 
 
-(defrecord Function [closure arg-list forms]
-  Invokable
+(defrecord IFn* [closure arg-list forms]
+  IFn
   (invoke [this sm arguments]
     (let [sm (-> sm
                  state/create-scope
@@ -25,8 +26,8 @@
 
 (defn new [sm arg-list forms]
   (let [closure (state/get-closure-environment sm)]
-    (->Function sm {:closure closure :arg-list arg-list} forms)))
+    (->IFn* sm {:closure closure :arg-list arg-list} forms)))
 
 
 (defn invokable? [x]
-  (satisfies? Invokable x))
+  (satisfies? IFn x))

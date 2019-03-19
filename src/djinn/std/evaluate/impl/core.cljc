@@ -5,16 +5,61 @@
    [djinn.std.evaluator :refer [evaluate-arguments]]
    [djinn.std.state-machine :as state]
    [djinn.std.scope :as scope]
-   [djinn.std.function :as std.function]))
+   [djinn.std.fn :as std.fn]))
 
 
-#_(defn evaluate-arguments
-    [sm arguments]
-    (reduce 
-     (fn [[sm result-listing] arg]
-       (let [[sm result] (evaluate arg sm)]
-         [sm (conj result-listing result)]))
-     (concat [sm []] arguments)))
+(defn evaluate-list [this sm]
+  (let [[fsym & arguments] this
+        [sm fvar] (evaluate fsym sm)]
+    (cond
+      (std.fn/invokable? fvar)
+      (std.fn/invoke fvar sm arguments)
+
+      (or (ifn? fvar) (fn? fvar))
+      (let [[sm arguments] (evaluate-arguments sm arguments)]
+        [sm (apply fvar arguments)])
+
+      :else
+      (throw (ex-info "First argument of s-exp is not invokable." {:var fvar :sym fsym})))))
+
+
+(defn evaluate-map [this sm]
+  (let [*sm (atom sm)] ;; TODO: switch to loop
+    (->> this
+         (map (fn [[k v]] 
+                (let [[sm k] (evaluate k @*sm)
+                      [sm v] (evaluate v sm)]
+                  (reset! *sm sm)
+                  [k v])))
+         (into {})
+         (conj [@*sm]))))
+
+
+(defn evaluate-vector [this sm]
+  (let [*sm (atom sm) ;; TODO: switch to loop
+        this
+        (mapv (fn [elem]
+                (let [[sm value] (evaluate elem @*sm)]
+                  (reset! *sm sm)
+                  value)) this)]
+    [@*sm this]))
+
+
+(defn evaluate-set [this sm]
+  (let [*sm (atom sm)
+        this
+        (map (fn [elem]
+               (let [[sm value] (evaluate elem @*sm)]
+                 (reset! *sm sm)
+                 value)) this)]
+    [@*sm (set this)]))
+
+
+(defn evaluate-symbol [this sm]
+  (let [val (state/get-var sm this)]
+    (if-not (scope/undefined? val)
+      [sm val]
+      (throw (ex-info (str "Unable to resolve symbol: " this " in this context") {:symbol this})))))
 
 
 (extend-protocol djinn.std.evaluate.protocol/Evaluate
@@ -23,93 +68,29 @@
   ;; Base Clojure Data Collections
   ;;
 
-  clojure.lang.PersistentList
-  (evaluate [this sm]
-    (let [[fsym & arguments] this
-          [sm fvar] (evaluate fsym sm)]
-      (cond
-        (std.function/invokable? fvar)
-        (std.function/invoke fvar sm arguments)
+  ;;#?(:clj clojure.lang.PersistentList :cljs cljs.core.PersistentList)
+  ;;(evaluate [this sm] (evaluate-list this sm))
 
-        (or (ifn? fvar) (fn? fvar))
-        (let [[sm arguments] (evaluate-arguments sm arguments)]
-          [sm (apply fvar arguments)])
+  ;;#?(:clj clojure.lang.PersistentArrayMap :cljs cljs.core.PersistentArrayMap)
+  ;;(evaluate [this sm] (evaluate-map this sm))
 
-        :else
-        (throw (ex-info "First argument of s-exp is not invokable." {:var fvar :sym fsym})))))
+  ;;#?(:clj clojure.lang.PersistentVector :cljs cljs.core.PersistentVector)
+  ;;(evaluate [this sm] (evaluate-vector this sm))
 
-  clojure.lang.PersistentArrayMap
-  (evaluate [this sm]
-    (let [*sm (atom sm)] ;; TODO: switch to loop
-      (->> this
-           (map (fn [[k v]] 
-                  (let [[sm k] (evaluate k @*sm)
-                        [sm v] (evaluate v sm)]
-                    (reset! *sm sm)
-                    [k v])))
-           (into {})
-           (conj [@*sm]))))
+  ;;#?(:clj clojure.lang.PersistentHashSet :cljs cljs.core.PersistentHashSet)
+  ;;(evaluate [this sm] (evaluate-set this sm))
 
-  clojure.lang.PersistentVector
-  (evaluate [this sm]
-    (let [*sm (atom sm) ;; TODO: switch to loop
-          this
-          (mapv (fn [elem]
-                  (let [[sm value] (evaluate elem @*sm)]
-                    (reset! *sm sm)
-                    value)) this)]
-      [@*sm this]))
-
-  clojure.lang.PersistentHashSet
-  (evaluate [this sm]
-    (let [*sm (atom sm)
-          this
-          (map (fn [elem]
-                 (let [[sm value] (evaluate elem @*sm)]
-                   (reset! *sm sm)
-                   value)) this)]
-      [@*sm (set this)]))
-
-  ;;
-  ;; Base Clojure Data Types
-  ;;
-
-  clojure.lang.Keyword
-  (evaluate [this sm] [sm this])
-
-  clojure.lang.Ratio
-  (evaluate [this sm] [sm this])
-
-  clojure.lang.Symbol
-  (evaluate [this sm]
-    (let [val (state/get-var sm this)]
-      (if-not (scope/undefined? val)
-        [sm val]
-        (throw (ex-info (str "Unable to resolve symbol: " this " in this context") {:symbol this})))))
-
-  ;;
-  ;; Base Java Data Types
-  ;;
-
-  java.lang.String
-  (evaluate [this sm] [sm this])
-
-  java.lang.Long
-  (evaluate [this sm] [sm this])
-
-  java.lang.Double
-  (evaluate [this sm] [sm this])
-
-  java.lang.Boolean
-  (evaluate [this sm] [sm this])
-
-  java.util.regex.Pattern
-  (evaluate [this sm] [sm this])
+  ;;#?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
+  ;;(evaluate [this sm] (evaluate-symbol this sm))
 
   ;; Use Default for everything else
-  java.lang.Object
+  #?(:clj java.lang.Object :cljs default)
   (evaluate [this sm]
-    (println (str "Warning: Unknown Evaluated Object [" (type this) "]"))
-    [sm this]))
-  
-  
+    (cond
+      (list? this) (evaluate-list this sm)
+      (seq? this) (evaluate-list this sm)
+      (map? this) (evaluate-map this sm)
+      (vector? this) (evaluate-map this sm)
+      (set? this) (evaluate-set this sm)
+      (symbol? this) (evaluate-symbol this sm)
+      :else [sm this])))
