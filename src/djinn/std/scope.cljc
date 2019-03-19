@@ -12,6 +12,11 @@
   (update-in scope [:listing] conj {}))
 
 
+(defn merge-scope [scope kv]
+  (let [last-index (-> scope :listing count dec)]
+    (update-in scope [:listing last-index] merge kv)))
+
+
 (defn remove-scope [scope]
   (update-in scope [:listing] pop))
 
@@ -37,4 +42,4 @@
       (create-scope)
       (set-var 'a 456)
       (remove-scope)
-      (get-var 'a))
+      (merge-scope {'b 456 'a true}))

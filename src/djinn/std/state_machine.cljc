@@ -24,12 +24,24 @@
 
 
 (defn create-scope [sm]
-  (update-in sm [:scope] scope/new-scope))
+  (update-in sm [:scope] scope/create-scope))
+
+
+(defn merge-scope [sm]
+  (update-in sm [:scope] scope/merge-scope))
 
 
 (defn remove-scope [sm]
   (update-in sm [:scope] scope/remove-scope))
 
 
+(defn get-closure-environment [sm]
+  (->> (-> sm :scope :listing)
+       (reduce merge)))
+
+
 #_(-> (new-state-machine)
-      (set-var 'a 123))
+      (set-var 'a 123)
+      (create-scope)
+      (set-var 'b 456)
+      (get-closure-environment))

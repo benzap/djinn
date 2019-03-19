@@ -15,26 +15,16 @@
   ;;
 
   clojure.lang.PersistentList
-  (parse [this]
-    (djinn.std.ast.s-expression/->SExpression
-     (map djinn.std.parse.protocol/parse this)))
+  (parse [this] this)
 
   clojure.lang.PersistentArrayMap
-  (parse [this]
-    (djinn.std.ast.map/->MapExpression
-     (map (fn [[k v]] [(djinn.std.parse.protocol/parse k)
-                       (djinn.std.parse.protocol/parse v)])
-          this)))
+  (parse [this] this)
     
   clojure.lang.PersistentVector
-  (parse [this]
-    (djinn.std.ast.vector/->VectorExpression
-     (map djinn.std.parse.protocol/parse this)))
+  (parse [this] this)
     
   clojure.lang.PersistentHashSet
-  (parse [this]
-    (djinn.std.ast.set/->MapSetExpression
-     (map djinn.std.parse.protocol/parse this)))
+  (parse [this] this)
 
   ;;
   ;; Base Clojure Data Types
