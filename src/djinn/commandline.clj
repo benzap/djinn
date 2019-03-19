@@ -4,4 +4,4 @@
 
 
 (defn -main [& args]
-  (djinn/eval (println "Hello World!")))
+  (djinn/eval (def x "Hello World!") (println x)))
