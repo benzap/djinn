@@ -27,4 +27,4 @@
 ;; (eval 1 2 3)
 ;; (eval (def x 10) (def y 11) x {:a x} y (def x true) y x)
 ;; (eval (conj [1 2] 3))
-;; (eval (fn [x y] true))
+;; (eval ((fn [x y] true) 1 2))
