@@ -15,7 +15,5 @@
       [(state/set-global-var sm var-name var-value) var-value])))
     
 
-
-
 (defn import-stdlib-def [sm]
   (state/set-global-var sm 'def (->Def)))

@@ -7,5 +7,6 @@
   [sm]
   (-> sm
       (state/set-global-var '+ +)
-      (state/set-global-var 'conj conj)))
+      (state/set-global-var 'conj conj)
+      (state/set-global-var 'println println)))
       

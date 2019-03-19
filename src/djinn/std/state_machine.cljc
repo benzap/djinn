@@ -27,8 +27,8 @@
   (update-in sm [:scope] scope/create-scope))
 
 
-(defn merge-scope [sm]
-  (update-in sm [:scope] scope/merge-scope))
+(defn merge-scope [sm scope]
+  (update-in sm [:scope] scope/merge-scope scope))
 
 
 (defn remove-scope [sm]

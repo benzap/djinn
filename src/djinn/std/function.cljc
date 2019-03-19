@@ -13,19 +13,15 @@
   Invokable
   (invoke [this sm arguments]
     (let [sm (-> sm
-                 ;; Closure Scope
                  state/create-scope
-                 (state/merge-scope closure)
-                 ;; Function Scope
-                 state/create-scope)
+                 (state/merge-scope closure) ;; Closure Scope
+                 state/create-scope)         ;; Function Scope
           ;; TODO: Bind arguments to arg-list variables
           [sm result] (evaluate sm forms)]
       
       ;; Remove closure scope and function scope
       [(-> sm state/remove-scope state/remove-scope) result])))
-          
-      
-    
+
 
 (defn new [sm arg-list forms]
   (let [closure (state/get-closure-environment sm)]

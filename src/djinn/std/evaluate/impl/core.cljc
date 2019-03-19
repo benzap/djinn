@@ -8,6 +8,15 @@
    [djinn.std.function :as std.function]))
 
 
+#_(defn evaluate-arguments
+    [sm arguments]
+    (reduce 
+     (fn [[sm result-listing] arg]
+       (let [[sm result] (evaluate arg sm)]
+         [sm (conj result-listing result)]))
+     (concat [sm []] arguments)))
+
+
 (extend-protocol djinn.std.evaluate.protocol/Evaluate
 
   ;;
@@ -17,17 +26,17 @@
   clojure.lang.PersistentList
   (evaluate [this sm]
     (let [[fsym & arguments] this
-          fvar (state/get-var sm fsym)]
+          [sm fvar] (evaluate fsym sm)]
       (cond
-        (scope/undefined? fvar)
-        (throw (ex-info "First argument of s-exp is not defined" {:value fsym}))
         (std.function/invokable? fvar)
         (std.function/invoke fvar sm arguments)
+
         (or (ifn? fvar) (fn? fvar))
         (let [[sm arguments] (evaluate-arguments sm arguments)]
           [sm (apply fvar arguments)])
+
         :else
-        (throw (ex-info "First argument of s-exp is not invokable." {:value fsym})))))
+        (throw (ex-info "First argument of s-exp is not invokable." {:var fvar :sym fsym})))))
 
   clojure.lang.PersistentArrayMap
   (evaluate [this sm]

@@ -1,7 +1,6 @@
 (ns djinn.std.evaluator
   (:require
-   [djinn.std.evaluate.protocol]
-   [djinn.std.evaluate.impl.core]))
+   [djinn.std.evaluate.protocol]))
 
 
 (defn evaluate-form
