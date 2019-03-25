@@ -1,7 +1,9 @@
-# djinn - Clojure-in-clojure Scripting.
+# djinn - Subset of clojure as a scripting language
 
-The answer to using clojure within a natively compiled clojure
-application.
+The answer to using a subset of clojure within a natively compiled
+clojure application.
+
+*djinn is early alpha, and is not fully functional*
 
 ## Example
 
